@@ -290,6 +290,12 @@ class InstrumentXHR {
                 event       : 'send',
                 data_length : lenStr,
             });
+
+            let headersCarrier = {};
+            tracer.inject(span.context(), tracer.FORMAT_HTTP_HEADERS, headersCarrier);
+            for (const [key, value] of Object.entries(headersCarrier)) {
+                proxied.setRequestHeader.apply(key, value);
+            }
             return proxied.send.apply(this, arguments);
         };
     }
